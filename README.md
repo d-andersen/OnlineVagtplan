@@ -1,6 +1,6 @@
 # OnlineVagtplan
 
-#### DM571 Software Engineering Autumn 2019 - Project Part 2 - LocalCinema Case Study
+#### DM571 Software Engineering Fall 2019 - Project Part 2 - LocalCinema Case Study
 
 This project aims to implement a simple duty roster for a local cinema.
 
@@ -20,7 +20,7 @@ The system has the following features:
 
 - Users can sign up for shifts and cancel their signup as well.
 
-- There is also an OpenAPI specification, although this has not been implemented.
+- There is also an [OpenAPI](openapi.yaml) specification, although this has not been implemented.
 
 The project was made using Python 3.6.8 and Django 2.2.7 and the application has now been archived.
 
