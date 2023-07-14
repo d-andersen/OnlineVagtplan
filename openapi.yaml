@@ -1,0 +1,325 @@
+# 
+# DM571 - Software Engineering - Fall Semester 2019
+# 
+# University of Southern Denmark
+# 
+# Project Part 2
+# 
+# LocalCinema Case Study - LocalCinema OnlineVagtplan OpenAPI 3.0 Specification
+# 
+# 
+# Authors:
+# Dennis Andersen -- deand17
+# Michael Hangaard Hansen -- michh16
+# Mads Harloff Lauritsen -- madla17
+# Eivind Roslyng-Jensen -- eiros15
+# 
+# Last edit:
+# November 23, 2019
+# 
+# Sources:
+# 
+# OpenAPI 3.0 Specification
+# https://swagger.io/specification/
+#
+# OpenAPI 3.0 Tutorial
+# https://app.swaggerhub.com/help/tutorials/openapi-3-tutorial
+#
+# Swagger Editor (Swagger Petstore Example)
+# https://editor.swagger.io/
+#
+
+openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: OnlineVagtplan API
+  description: OpenAPI specification for LocalCinema's OnlineVagtplan system
+  
+servers:
+  - url: http://api.localcinema.com/v1
+
+# All endpoints are secured via an API Key
+security:
+  - apiKey: []
+
+
+paths:
+  # Fetch a list of the first next shows (GET request)
+  /shows:
+    get:
+      description: Returns a list of shows 
+      parameters: 
+        - $ref: '#/components/parameters/DateParam'
+        - $ref: '#/components/parameters/DateRangeStartParam'
+        - $ref: '#/components/parameters/DateRangeEndParam'
+      responses:
+        '200':
+          description: Successfully returned a list of shows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Show'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  # Fetch a list of shifts for a given show (GET request)
+  /show/{show_id}/shifts:
+    get:
+      description: Get a list of shifts for a particular show based on the show's id
+      parameters: 
+        - name: show_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully returned a list of shifts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Shift'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  # Fetch a list of users (GET request)
+  /users:
+    get:
+      description: Returns a list of users
+      parameters: 
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/OffsetParam'
+      responses:
+        '200':
+          description: Successfully returned a list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Take a shift (POST request)
+  /shift/{shift_id}/take_shift:
+    post:
+      description: This can only be done by the logged in user
+      parameters:
+        - name: shift_id
+          in: path
+          description: Id of the shift the user wants to take
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Upon successfully signing the user up for the shift, a JSON object containing the updated information about the shift will be returned. Otherwise an error message will be returned specifying why the user could not be signed up for the shift.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/Shift'
+                - type: object
+                  properties:   
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  # Remove a user from a shift (POST request)
+  /shift/{shift_id}/cancel_shift:
+    post:
+      description: This can only be done by the logged in user
+      parameters:
+        - name: shift_id
+          in: path
+          description: Id of the shift the user wants to cancel
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Upon successfully removing the user from the shift, a JSON object containing the updated information about the shift will be returned. Otherwise an error message will be returned specifying why the user could not be removed from the shift.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/Shift'
+                - type: object
+                  properties:   
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  # Reusable schemas (data models)
+  schemas: 
+    Show:
+      type: object
+      required:
+        - show_id
+        - show_name
+        - show_start
+      properties:
+        show_id:
+          type: integer
+        show_name:
+          type: string
+        show_start:
+          type: string
+          format: date-time
+        show_end:
+          type: string
+          format: date-time
+        shifts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Shift'
+    
+    Shift:
+      type: object
+      required:
+        - shift_id
+        - shift_type
+        - shift_start
+        - shift_end
+        - shift_status
+      properties:
+        shift_id:
+          type: integer
+        shift_type:
+          description: 'Two-letter code specifying the type of shift. The possibilies are TS: Ticket Selling; CS: Candy Selling; MO: Movie Operation; CL: Cleaning; FS: Facility Service; PR: PR Work'
+          type: string
+          minLength: 2
+          maxLength: 2
+          enum: 
+            - TS # Ticket Selling
+            - CS # Candy Selling
+            - MO # Movie Operation
+            - CL # Cleaning
+            - FS # Facility Service
+            - PR # PR Work
+          example: 'TS'
+        shift_start:
+          type: string
+          format: date-time
+        shift_end:
+          type: string
+          format: date-time
+        user_id:
+          description: If a shift is taken, this contains the user id of the volunteer who has taken the shift.
+          type: integer
+          nullable: true
+        shift_status:
+          description: Specifies whether or not the shift is taken
+          type: string
+          enum:
+            - available
+            - taken
+      
+    User:
+      type: object
+      required:
+        - user_id
+        - username
+      properties:
+        user_id:
+          type: integer
+        username:
+          type: string
+
+  # Reusable path, query, header and cookie parameters
+  parameters: 
+    DateParam:
+      name: date
+      in: query
+      description: Get a list of the shows on the specified date. For listing shows in a date range, use `start_date` and `end_date` instead.
+      schema:
+        type: string
+        format: date
+        
+    DateRangeStartParam:
+      name: start_date
+      in: query
+      description: List shows from this date forward. Must be used together with `end_date`. Incompatible with the `date` parameter.
+      schema:
+        type: string
+        format: date
+      
+    DateRangeEndParam:
+      name: end_date
+      in: query
+      description: List shows up until this date. Must be used together with `start_date`. Incompatible with the `date` parameter.
+      schema:
+        type: string
+        format: date
+
+    LimitParam:
+      name: limit
+      in: query
+      description: Limit the number of items on a page
+      schema:
+        type: integer
+    
+    OffsetParam:
+      name: offset
+      in: query
+      description: Specifies the page number of the items to be displayed
+      schema:
+        type: integer
+
+  # Security scheme definitions (see also OpenAPI 3.0 Authentication)
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key
+
+  # Reusable responses, 400 Bad Request or 404 Not Found
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:   
+              message:
+                type: string
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:   
+              message:
+                type: string
