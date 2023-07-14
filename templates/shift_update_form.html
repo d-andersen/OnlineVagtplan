@@ -1,0 +1,78 @@
+<div id="div_id_shift_type{{ shift.id }}" class="form-group">
+  <label for="id_shift_type{{ shift.id }}" class=" requiredField">
+    Shift type<span class="asteriskField">*</span>
+  </label>
+  <div class="">
+    <select name="shift_type{{ shift.id }}" class="select form-control" required id="id_shift_type{{ shift.id }}">
+      <option value="" selected>Choose shift type</option>
+      <option value="TS">Ticket Selling</option>
+      <option value="CS">Candy Selling</option>
+      <option value="MO">Movie Operation</option>
+      <option value="CL">Cleaning</option>
+      <option value="FS">Facility Service</option>
+      <option value="PR">PR Work</option>
+    </select>
+  </div>
+</div>
+
+<div id="div_id_description{{ shift.id }}" class="form-group">
+  <label for="id_description{{ shift.id }}" class=" requiredField">
+    Description<span class="asteriskField">*</span>
+  </label>
+  <div class="">
+    <textarea name="description" cols="40" rows="4" class="textarea form-control" required
+      id="id_description{{ shift.id }}"></textarea>
+  </div>
+</div>
+
+<div id="div_id_start{{ shift.id }}" class="form-group">
+  <label for="id_start{{ shift.id }}" class=" requiredField">
+    Start<span class="asteriskField">*</span>
+  </label>
+  <div class="">
+    <div class="input-group" id="div_id_start{{ shift.id }}" data-target-input="nearest">
+      <input type="text" name="start" class="datetimepicker form-control datetimepicker-input" required="True"
+        id="id_start{{ shift.id }}" data-toggle="datetimepicker" data-target="#id_start{{ shift.id }}">
+      <div class="input-group-append" data-target="#id_start{{ shift.id }}" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      function deferDateTimePicker_id_start{{ shift.id }}() {
+        if (window.jQuery && $.fn.datetimepicker) {
+          $('#id_start{{ shift.id }}').datetimepicker({ "format": "YYYY-MM-DD HH:mm", "icons": { "time": "fa fa-clock-o" }, "useCurrent": true, "collapse": false, "stepping": "5", "sideBySide": true });
+        } else {
+          setTimeout(function () { deferDateTimePicker_id_start{{ shift.id }}() }, 50);
+        }
+      }
+
+      deferDateTimePicker_id_start{{ shift.id }}();
+    </script>
+  </div>
+</div>
+
+<div id="div_id_end{{ shift.id }}" class="form-group"> <label for="id_end{{ shift.id }}" class=" requiredField">
+    End<span class="asteriskField">*</span> </label>
+  <div class="">
+    <div class="input-group" id="div_id_end" data-target-input="nearest"> <input type="text" name="end"
+        class="datetimepicker form-control datetimepicker-input" required="True" id="id_end{{ shift.id }}"
+        data-toggle="datetimepicker" data-target="#id_end{{ shift.id }}">
+      <div class="input-group-append" data-target="#id_end{{ shift.id }}" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      function deferDateTimePicker_id_end{{ shift.id }}() {
+        if (window.jQuery && $.fn.datetimepicker) {
+          $('#id_end{{ shift.id }}').datetimepicker({ "format": "YYYY-MM-DD HH:mm", "icons": { "time": "fa fa-clock-o" }, "useCurrent": true, "collapse": false, "stepping": "5", "sideBySide": true });
+        } else {
+          setTimeout(function () { deferDateTimePicker_id_end{{ shift.id }}() }, 50);
+        }
+      }
+
+      deferDateTimePicker_id_end{{ shift.id }}();
+    </script>
+  </div>
+</div>

@@ -1,0 +1,286 @@
+{% load static %}
+
+{% load tz %}
+
+{% load admin_urls %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap 4 and jQuery -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+
+  <!-- Own CSS -->
+  <!--<link href="{% static 'css/base.css' %}" rel="stylesheet">-->
+
+  <title>{% block title %}{% endblock title %}</title>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+    }
+
+    h4 {
+      font-size: 1.25rem;
+    }
+
+    h5 {
+      font-size: 1rem;
+    }
+
+    h6 {
+      font-size: 14px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    .p {
+      font-size: 14px;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content {
+      flex: 1 0 auto;
+    }
+
+    .footer {
+      flex-shrink: 0;
+    }
+
+
+    @media (min-width: 992px) {
+      .container {
+        min-width: 80%;
+      }
+    }
+
+
+    /* change the background color */
+    .navbar-custom {
+      background-color: #080706;
+    }
+
+    /* change the brand and text color */
+    .navbar-custom .navbar-brand,
+    .navbar-custom .navbar-text {
+      color: rgba(255, 255, 255, .8);
+    }
+
+    /* change the link color */
+    .navbar-custom .navbar-nav .nav-link {
+      color: rgba(255, 255, 255, .5);
+    }
+
+    /* change the color of active or hovered links */
+    .navbar-custom .nav-item.active .nav-link,
+    .navbar-custom .nav-item:focus .nav-link,
+    .navbar-custom .nav-item:hover .nav-link {
+      color: #ffffff;
+    }
+
+    .event-card {
+      min-width: 100px;
+    }
+
+    .event-card-title {
+      color: #000000;
+      font-size: 1em;
+      font-weight: 500;
+      /*padding-left: 5px;*/
+    }
+
+    .event-col {
+      padding-inline-start: 0px;
+      padding-inline-end: 0px;
+      padding: 5px;
+    }
+
+    hr {
+      display: block;
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+      margin-left: auto;
+      margin-right: auto;
+      border: 1px solid black;
+    }
+
+    .cal-frame {
+      width: 100%;
+      border: 1px solid lightgray;
+      border-radius: 4px;
+
+      min-height: 50vh;
+    }
+
+    .button-noshow {
+      background-color: Transparent;
+      background-repeat: no-repeat;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      outline: none;
+      padding-left: 2px;
+      padding-right: 2px;
+    }
+
+    .align-r {
+      margin-top: 7px;
+      position: relative;
+      left: 8px;
+    }
+  </style>
+  {{ form.media }}
+</head>
+
+<body>
+
+  <header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="{% url 'home' %}">OnlineVagtplan</a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+        aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarToggle">
+        <!-- Navbar Right Side -->
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav ml-auto">
+
+          <a class="nav-item nav-link mr-2" href="{% url 'event_new' %}">New Event</a>
+
+          <a class="nav-item nav-link mr-2" href="{% url 'home' %}">Event Calendar</a>
+
+          <a class="nav-item nav-link mr-2" href="{% url 'group_list' %}">Groups and Users</a>
+
+          <li class="nav-item ml-2">
+            <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              {{ user.username }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+              {% if user.username == 'sysadmin' %}
+              <a class="dropdown-item" href="{% url 'admin:index' %}">Admin Site</a>
+              <div class="dropdown-divider"></div>
+              {% endif %}
+              <a class="dropdown-item" href="{% url 'logout' %}">
+                Log Out</a>
+            </div>
+          </li>
+        </ul>
+        {% else %}
+        <form class="form-inline ml-auto">
+          <a href="{% url 'login' %}" class="btn btn-outline-secondary">
+            Log In</a>
+          <a href="{% url 'signup' %}" class="btn btn-primary ml-2">
+            Sign up</a>
+        </form>
+        {% endif %}
+      </div>
+    </nav>
+  </header>
+
+  <main class="content mt-4" role="main">
+    <div class="container my-5">
+      <!-- style="border: 1px dotted gray;" -->
+
+      <div class="row">
+        <div class="col mt-3">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            {% localtime on %}
+            {{ message }}
+            {% endlocaltime %}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      {% block content %}{% endblock content %}
+    </div>
+  </main>
+
+  <footer class="bg-dark">
+    <div class="container-fluid">
+      <div class="row my-1 justify-content-center">
+        <div class="col-5 mt-3 text-light">
+          <ul class="list-unstyled">
+            <li>
+              <h5>DM571 Software Engineering</h5>
+            </li>
+            <li>Project Part 2</li>
+            <li>LocalCinema Case Study</li>
+            <li>OnlineVagtplan System Implementation</li>
+          </ul>
+        </div>
+        <div class="col-5 mt-3 text-light">
+          <ul class="list-unstyled">
+            <li>
+              <h5>University of Southern Denmark</h5>
+            </li>
+            <li>
+              <h6>Department of Mathematics and Computer Science</h6>
+            </li>
+            <li>
+              <ul>
+                <li>deand17</li>
+                <li>michh16</li>
+                <li>madla17</li>
+                <li>eiros15</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row footer"></div>
+    </div>
+  </footer>
+
+  <!-- Optional JavaScript -->
+  <!-- Popper.js, then Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

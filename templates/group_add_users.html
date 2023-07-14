@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="row mb-5">
+
+  <div class="col-xs-9 col-sm-9 col-md-6 col-lg-6">
+    <div class="card">
+
+      <div class="card-header pb-1">
+        <div class="row align-items-center">
+          <div class="col">
+            <a class="pb-0 text-dark" href="{% url 'group_detail' group.pk %}">
+              <h2>{{ group.title }}</h2>
+            </a>
+          </div>
+          <div class="col-auto">
+            <h6>Group</h6>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <small class="text-muted"><i class="fas fa-users"></i> Members</small>
+
+        <div class="row px-2">
+          <div class="col px-1">
+            {% include 'group_remove_user.html' %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="col-xs-9 col-sm-9 col-md-6 col-lg-6">
+
+    <div class="card">
+
+      <div class="card-header pb-1">
+        <div class="row align-items-center">
+          <div class="col">
+            <h2>Users</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+
+        <div class="row px-2">
+          <div class="col px-1">
+            <form method="POST" action="{% url 'add_members_to_group' group.pk %}">
+              {% csrf_token %}
+              {% for user in users %}
+
+              {% if user not in group.members.all %}
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">
+                    <input type="checkbox" name="selected_user" value="{{ user.pk }}">
+                  </div>
+                </div>
+                <input type="text" class="form-control" aria-label="Text input with checkbox" disabled="True"
+                  value="{{ user.username }}">
+              </div>
+              {% endif %}
+
+              {% endfor %}
+              <button class="btn btn-primary mt-2" type="submit">Add Selected Users to Group</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,111 @@
+<div class="row mt-3">
+  <div class="col">
+    <small class="text-muted">Shifts</small>
+  </div>
+  <div class="col-auto">
+    <small class="text-muted">{{ event.get_free_shift_count }}/{{ event.get_total_shift_count }} Available</small>
+  </div>
+</div>
+
+<div class="row mx-0">
+  {% if event.shifts %}
+  {% for shift in event.shifts.all %}
+  <div class="container">
+    <div class="row px-0">
+      <div class="col px-0">
+        <!-- Shifts as badges -->
+        {% if not shift.volunteer and shift.start|date:"c" > today|date:"c" %}
+        <!-- Button trigger modal -->
+        <button class="button-noshow" data-toggle="modal" data-target="#takeShiftModal{{ shift.id }}">
+          <span class="badge badge-success">
+            {{ shift.get_shift_type_display }}:
+            {{ shift.start|date:"H:i" }}-{{ shift.end|date:"H:i" }}
+          </span>
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="takeShiftModal{{ shift.id }}" tabindex="-1" role="dialog"
+          aria-labelledby="takeShiftModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="takeShiftModalLabel">Take Shift?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Do you want to take this shift? <br>
+
+                <b>{{ shift.get_shift_type_display }}</b> on <b>{{ shift.start|date:"F j, Y" }}</b>
+                from <b>{{ shift.start|date:"H:i" }}</b> to <b>{{ shift.end|date:"H:i" }}</b>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                <form method="POST" action="{% url 'shift_take' event.pk shift.pk %}">
+                  {% csrf_token %}
+                  <button class="btn btn-primary" type="submit">Yes, Take Shift</button>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Modal -->
+
+        {% elif user == shift.volunteer %}
+        <!-- Button trigger modal -->
+        <span class="badge badge-primary">
+          {{ shift.get_shift_type_display }}:{{ shift.start|date:"H:i" }}-{{ shift.end|date:"H:i" }}
+          <button class="button-noshow" data-toggle="modal" data-target="#cancelShiftModal{{ shift.id }}">
+            <i class="fas fa-times text-white"></i>
+          </button>
+        </span>
+
+        <!-- Modal -->
+        <div class="modal fade" id="cancelShiftModal{{ shift.id }}" tabindex="-1" role="dialog"
+          aria-labelledby="cancelShiftModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="cancelShiftModalLabel">Cancel Signup for Shift?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Do you want to cancel your signup for this shift? <br>
+
+                <b>{{ shift.get_shift_type_display }}</b> on <b>{{ shift.start|date:"F j, Y" }}</b>
+                from <b>{{ shift.start|date:"H:i" }}</b> to <b>{{ shift.end|date:"H:i" }}</b>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                <form method="POST" action="{% url 'shift_cancel' event.pk shift.pk %}">
+                  {% csrf_token %}
+                  <button class="btn btn-danger" type="submit">Yes, Cancel Signup</button>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% else %}
+        <!-- Shift has started -->
+        <span class="badge badge-secondary">
+          {{ shift.get_shift_type_display }}:
+          {{ shift.start|date:"H:i" }}-{{ shift.end|date:"H:i" }}
+        </span>
+        {% endif %}
+        <!-- End shifts as badges -->
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <p>This event doesn't have any shifts yet.</p>
+  {% endif %}
+</div>

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}OnlineVagtplan{% endblock title %}
+
+{% block content %}
+
+<!-- Week info and week navigation -->
+<div class="row mx-1 mx-lg-2">
+  <div class="col-xs-12 col-lg pt-2">
+    <h4>Week {{ week|date:"W, F Y" }}</h4>
+  </div>
+  <div class="col col-lg-auto pt-lg-1 px-1">
+    <a class="btn btn-primary btn-sm btn-block" href="{% url 'home' %}?{{ prev_week }}"><i
+        class="fas fa-chevron-left mr-1"></i> Last week</a>
+  </div>
+  <div class="col col-lg-auto pt-lg-1 px-1">
+    <a class="btn btn-primary btn-sm btn-block" href="{% url 'home' %}?{{ next_week }}">Next week <i
+        class="fas fa-chevron-right ml-1"></i></a>
+  </div>
+</div>
+
+<!-- Generate calendar -->
+<div class="row mx-1 mt-3 mx-lg-2">
+  {% for day in days %}
+
+  <!-- Date header -->
+  <div class="col-md-12 col-xl px-lg-2 mx-lg-1 my-1 my-xl-0 cal-frame">
+    {% if day|date:"M j Y" == today|date:"M j Y" %}
+    <h6 class="mt-4 mt-lg-2 text-primary">{{ day|date:"D" }}</h6>
+    <h4 class="text-primary">{{ day|date:"j" }}</h4>
+    {% else %}
+    <h6 class="mt-4 mt-lg-2">{{ day|date:"D" }}</h6>
+    <h4>{{ day|date:"j" }}</h4>
+    {% endif %}
+    <hr>
+
+    <!-- Populate day with events -->
+    <div class="row mx-0" style="width: 100%;">
+      {% for event in events %}
+      {% if event.start|date:"M j Y" == day|date:"M j Y" and event.end|date:"c" > today|date:"c" %}
+
+      <!-- Put each event in its own column -->
+      <div class="col-xs-12 col-md-4 col-xl event-col">
+
+        <!-- Begin Event Card -->
+        {% include 'event_card.html' %}
+        <!-- End Event Card -->
+
+      </div>
+
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<!-- End generate calendar -->
+{% endblock content %}

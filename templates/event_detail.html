@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col">
+
+    <div class="card">
+
+      <div class="card-header pb-1">
+        <div class="row align-items-center">
+          <div class="col">
+            <h2>{{ event.title }}</h2>
+          </div>
+          <div class="col-auto">
+            <h6>Event</h6>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h6 class="card-title text-muted">Created by {{ event.created_by }}, {{ event.date_created|timesince }} ago.
+        </h6>
+
+        <small class="text-muted">Event timeframe</small>
+        <h5>Starts {{ event.start|date:"F j, Y" }} at {{ event.start|time:"H:i" }}</h5>
+        <h5>Ends {{ event.end|date:"F j, Y" }} at {{ event.end|time:"H:i" }}</h5>
+
+        <small class="text-muted">Description</small>
+        <p class="card-text">
+          {% if event.description %}
+          {{ event.description }}
+          {% else %}
+          This event doesn't have a description yet.
+          {% endif %}
+        </p>
+
+        <!-- Begin Event Card Shifts -->
+        {% include "event_card_shifts.html" %}
+        <!-- End Event Card Shifts -->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col mt-3">
+    <a class="btn btn-primary" href="{% url 'event_manage' event.pk %}" role="button">Manage Event</a>
+  </div>
+</div>
+{% endblock content %}

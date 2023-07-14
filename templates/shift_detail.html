@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+
+      <div class="card">
+        
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col">
+              <h2>{{ shift.title }}</h2>
+            </div>
+            <div class="col-auto">
+              <h6>Shift</h6>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!--<h6 class="card-title text-muted">Created by event.created_by , event.date_created|timesince ago.</h6>-->
+          <br>
+
+          <small class="text-muted">Shift time frame</small>
+
+          <br>
+          <small class="text-muted"><i class="fas fa-users"></i>Volunteer</small>
+
+        </div>
+      </div>
+        
+    </div>
+  </div>
+{% endblock content %}

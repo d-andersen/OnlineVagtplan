@@ -1,0 +1,29 @@
+<div class="card my-0">
+
+  <!-- Begin Event Card Header -->
+  <a class="card-header event-card-title px-2 py-2 text-dark" href="{% url 'event_detail' event.pk %}">{{ event.title }}</a>
+  <!-- End Event Card Header -->
+
+  <!-- Begin Event Card Body -->
+  <div class="card-body px-2 py-2">
+    <small class="card-subtitle text-muted"><i class="fas fa-id-badge"></i> {{ event.created_by }}</small>
+
+    <!-- Begin Event Card Sub-Title -->
+    <div class="pt-2 mb-0">
+      <small class="card-subtitle text-muted">Event time frame</small>
+    </div>
+    <h6 class="card-subtitle mb-2 mt-0">Starts: {{ event.start|date:"H:i" }}</h6>
+    <h6 class="card-subtitle">Ends:
+      {% if event.end|date:"M j Y" > event.start|date:"M j Y" %}
+      {{ event.end|date:"H:i, m/j" }}
+      {% else %}
+      {{ event.end|date:"H:i" }}
+      {% endif %}
+    </h6>
+    <!-- End Event Card Sub-Title -->
+
+    <!-- Begin Event Card Shifts -->
+    {% include "event_card_shifts.html" %}
+    <!-- End Event Card Shifts -->
+  </div>
+</div>

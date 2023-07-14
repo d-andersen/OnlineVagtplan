@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row align-items-center">
+  <div class="col">
+    <h2>Manage Event</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <ul>
+      <li>
+        <p class="mb-1">You can edit the event title and description using the <b>Edit Event</b> button or delete the
+          event using the
+          <b>Delete Event</b> button.</p>
+      </li>
+      <li>
+        <p class="mb-1">You can add shifts to the event using the <b>Add Shift</b> form.</p>
+      </li>
+      <li>
+        <p class="mb-1">To edit an existing shift, click on the <i class="fas fa-edit"></i> icon. To delete a shift,
+          click on the <i class="fas fa-trash-alt"></i> icon.</p>
+      </li>
+      <li>
+        <p class="mb-1">When you are done editing, clicking the <b>Done</b> button at the bottom of the page will take
+          you back to the event calendar page.</p>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="row mb-1">
+  <div class="col-xs-9 col-sm-9 col-md-6 col-lg-6">
+
+    <!-- Begin event card -->
+    <div class="card">
+
+      <div class="card-header pb-1">
+        <div class="row align-items-center">
+          <div class="col">
+            <h4>{{ event.title }}</h4>
+          </div>
+          <div class="col-auto">
+            <h6>Event</h6>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h6 class="card-title text-muted">Created by {{ event.created_by }}, {{ event.date_created|timesince }} ago.
+        </h6>
+
+        <small class="text-muted">Description</small>
+        <p class="card-text">
+          {% if event.description %}
+          {{ event.description }}
+          {% else %}
+          This event doesn't have a description yet.
+          {% endif %}
+        </p>
+
+        {% if shifts %}
+        <!-- Danish format: "j-m-Y, H:i" e.g.: 17-11-2019 18:05 -->
+        <small class="text-muted">Event timeframe</small>
+        <h6>Starts {{ event.get_earliest_start|date:"F j, Y \a\t H:i" }}</h6>
+        <h6>Ends {{ event.get_latest_end|date:"F j, Y \a\t H:i" }}</h6>
+
+        <div class="row mt-3">
+          <div class="col">
+            <small class="text-muted">Shifts</small>
+          </div>
+          <div class="col-auto">
+            <small class="text-muted">{{ event.get_free_shift_count }}/{{ event.get_total_shift_count }}
+              Available</small>
+          </div>
+        </div>
+
+        <!-- Begin shift for loop -->
+        {% for shift in shifts %}
+        <div>
+          {% if not shift.volunteer %}
+          <span class="badge badge-success">
+            {{ shift.get_shift_type_display }}: {{ shift.start|date:"H:i" }}-{{ shift.end|date:"H:i" }}
+            <button class="button-noshow" data-toggle="modal" data-target="#editShiftModal{{ shift.id }}"><i
+                class="ml-2 mr-0 fas fa-edit text-white"></i></button>
+            <button class="button-noshow" data-toggle="modal" data-target="#deleteShiftModal{{ shift.id }}"><i
+                class="ml-2 fas fa-trash-alt text-white"></i></button>
+          </span>
+          {% else %}
+          <span class="badge badge-secondary">
+            {{ shift.get_shift_type_display }}: {{ shift.start|date:"H:i" }}-{{ shift.end|date:"H:i" }}
+          </span>
+          {% endif %}
+
+          <!-- Modal -->
+          <div class="modal fade" id="editShiftModal{{ shift.id }}" tabindex="-1" role="dialog"
+            aria-labelledby="editShiftModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editShiftModalLabel">Edit Shift</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <form method="POST" action="{% url 'shift_update' event.pk shift.pk %}">
+                  {% csrf_token %}
+                  <div class="modal-body">
+                    {% include 'shift_update_form.html' %}
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+          </div>
+          <!-- End modal -->
+
+          <!-- Modal -->
+          <div class="modal fade" id="deleteShiftModal{{ shift.id }}" tabindex="-1" role="dialog"
+            aria-labelledby="deleteShiftModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteShiftModalLabel">Delete Shift?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="modal-body">
+                  Do you want to permanently delete the shift
+
+                  <b>{{ shift.get_shift_type_display }}</b> on <b>{{ shift.start|date:"F j, Y" }}</b>
+                  from <b>{{ shift.start|date:"H:i" }}</b> to <b>{{ shift.end|date:"H:i" }}</b>?
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                  <form method="POST" action="{% url 'shift_delete' event.pk shift.pk %}">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Yes, Delete Shift</button>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <!-- End modal -->
+
+        </div>
+        {% endfor %}
+        <!-- End shift for loop -->
+
+        {% else %}
+        <small class="text-muted">Shifts</small>
+        <p>This event doesn't have any shifts yet.</p>
+        {% endif %}
+      </div>
+    </div>
+    <!-- End event card -->
+
+    <div class="row">
+      <!-- Edit event button and modal -->
+      <div class="col-auto mt-3 px-1 ml-2">
+
+        <button class="btn btn-primary" data-toggle="modal" data-target="#editEventModal{{ event.id }}">Edit
+          Event</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="editEventModal{{ event.id }}" tabindex="-1" role="dialog"
+          aria-labelledby="editEventModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+              <div class="modal-header">
+                <h5 class="modal-title" id="editEventModalLabel">Edit Event</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <form method="POST" action="{% url 'event_update' event.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                  {{ update_event_form|crispy }}
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button class="btn btn-primary" type="submit">Save Changes</button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+        <!-- End modal -->
+
+      </div>
+      <!-- End edit event button and modal -->
+      <!-- Delete event button and modal -->
+      <div class="col-auto mt-3 ml-auto">
+
+        <button class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteEventModal{{ event.id }}">Delete
+          Event</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="deleteEventModal{{ event.id }}" tabindex="-1" role="dialog"
+          aria-labelledby="deleteEventModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteEventModalLabel">Delete Event?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Do you want to permanently delete the event <b>{{ event.title }}</b>?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                <form method="POST" action="{% url 'event_delete' event.pk %}">
+                  {% csrf_token %}
+                  <button class="btn btn-danger" type="submit">Yes, Delete Event</button>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End modal -->
+
+      </div>
+      <!-- End delete event button and modal -->
+    </div>
+  </div>
+
+  <div class="col-xs-9 col-sm-9 col-md-6 col-lg-6">
+
+    <!-- Begin add shift card -->
+    <div class="card">
+
+      <div class="card-header pb-1">
+        <div class="row align-items-center">
+          <div class="col">
+            <h4>Add Shift</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="row px-0 py-0">
+          <div class="col">
+            <form method="POST">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <button class="btn btn-primary" type="submit">Add shift</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- End add shift card -->
+
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-auto ml-auto">
+    <a class="btn btn-primary mt-3" href="{% url 'home' %}">Done</a>
+  </div>
+</div>
+
+{% endblock content %}

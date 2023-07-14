@@ -1,0 +1,50 @@
+{% if group.num_members > 0 %}
+<ul class="mb-0 list-group list-group-flush">
+  {% for member in group.members.all %}
+  <li class="px-1 pt-1 pb-0 list-group-item">
+    <div class="row">
+      <div class="col p">
+        {{ member }}
+      </div>
+      <div class="col-auto">
+
+        <button class="button-noshow" data-toggle="modal" data-target="#removeUserFromGroupModal{{ group.pk }}{{ member.pk }}">
+          <i class="fas fa-user-minus text-dark p"></i>
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="removeUserFromGroupModal{{ group.pk }}{{ member.pk }}" tabindex="-1" role="dialog"
+          aria-labelledby="removeUserFromGroupModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="removeUserFromGroupModalLabel">Remove Member From Group?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Do you want to remove the member <b>{{ member }}</b> from the <b>{{ group }}</b> group?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                <form method="POST" action="{% url 'remove_member_from_group' group.pk member.pk %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <button class="btn btn-outline-danger" type="submit">Yes, Remove Member</button>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>This group doesn't have any members yet.</p>
+{% endif %}

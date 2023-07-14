@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Groups and Users{% endblock title %}
+
+
+{% block content %}
+
+<div class="row justify-content-center mb-5">
+
+  <div class="col-xs-9 col-sm-9 col-md-6 col-lg-6">
+    <h2>Groups</h2>
+    {% for group in groups %}
+
+    <!-- Group Card -->
+    <div class="card my-3">
+
+      <a class="card-header pb-0 text-dark" href="{% url 'group_detail' group.pk %}">
+        <h6>{{ group.title }}</h6>
+      </a>
+
+      <div class="row mx-0 px-1 mt-1 mb-0">
+        <div class="col">
+          <small class="card-text">
+            {% if group.description %}
+            {{ group.description }}
+            {% else %}
+            This group doesn't have a description yet.
+            {% endif %}
+          </small>
+        </div>
+      </div>
+
+      <div class="row px-2 mb-2 mt-1">
+        <div class="col">
+          <div id="accordion{{ group.pk }}">
+            <div class="card">
+              <div class="card-header py-0 pl-0" id="heading{{ group.pk }}">
+
+                <button class="btn btn-link text-dark" data-toggle="collapse" data-target="#collapse{{ group.pk }}"
+                  aria-expanded="false" aria-controls="collapse{{ group.pk }}">
+                  <small><strong>List Members</strong></small>
+                </button>
+
+                <div class="float-right align-r">
+                  <a class="text-dark" href="{% url 'group_add_members' group.pk %}"><small><i class="fas fa-plus"></i>
+                      <strong>Add Members</strong></small></a>
+                </div>
+              </div>
+
+              <div id="collapse{{ group.pk }}" class="collapse" aria-labelledby="heading{{ group.pk }}"
+                data-parent="#accordion{{ group.pk }}">
+                <div class="card-body px-2 py-1">
+                  {% include 'group_remove_user.html' %}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- End Group Card -->
+    {% endfor %}
+
+    <a class="btn btn-primary btn-sm" href="{% url 'create_group' %}" role="button">Create New Group</a>
+  </div>
+
+  <div class="col-sm-9 col-md-6 col-lg-6">
+    <h2>Users</h2>
+
+    {% for user in users %} <!-- | dictsort:'pk' -->
+    <div class="card my-3">
+      <a class="card-header pb-0 text-dark" href="#">
+        <h6>{{ user.username }}</h6>
+      </a>
+
+      <div class="card-body py-2">
+        <small class="text-muted">Contact information</small><br>
+
+        <small class="text-muted">
+          {{ user.first_name }} |
+          <i class="fas fa-envelope"></i> <a class="text-muted" href="mailto:{{ user.email }}">{{ user.email }}</a> |
+          <i class="fas fa-phone"></i> {{ user.phone_number }}
+        </small>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+</div>
+{% endblock content %}

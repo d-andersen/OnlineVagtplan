@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}New Event{% endblock title %}
+
+
+{% block content %}
+  <div class="container"> 
+    <div class="row justify-content-center mb-5">
+      <div class="col-sm-9 col-md-7 col-lg-5">
+        <div class="row align-items-center">
+          <div class="col">
+            <h2>Create New Event</h2>
+          </div>
+        </div>
+        <form method="POST">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <input type="hidden" name="event_id" value="{{ event.pk }}">
+          <div class="row justify-content-end">
+            <div class="col-auto">
+              <button class="btn btn-primary" type="submit">Next</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

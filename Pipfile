@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django = "==2.2.7"
+django-crispy-forms = "==1.8.0"
+psycopg2 = "*"
+dj-database-url = "*"
+whitenoise = "*"
+gunicorn = "==19.9.0"
+django-tempus-dominus = "==5.1.2.9"
+djangorestframework = "==3.10.3"
+djangorestframework-api-key = "==1.4.1"
+selenium = "*"
+httpie = "*"
+
+[requires]
+python_version = "3.6"
