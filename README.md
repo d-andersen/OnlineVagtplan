@@ -20,9 +20,21 @@ The system has the following features:
 
 - Users can sign up for shifts and cancel their signup as well.
 
+- There is also an OpenAPI specification, although this has not been implemented.
+
 The project was made using Python 3.6.8 and Django 2.2.7 and the application has now been archived.
 
 Below are some screendumps of the application, demonstrating some of the functionality.
+
+![Alt text](screendumps/ui-calendar.png?raw=true "Calendar UI")
+
+![Alt text](screendumps/ui-group-ticket-sellers.png?raw=true "Ticket Sellers Group UI")
+
+![Alt text](screendumps/ui-manage-event.png?raw=true "Manage Event UI")
+
+![Alt text](screendumps/ui-users-and-groups.png?raw=true "Users and Groups UI")
+
+
 
 ## Authors
 
